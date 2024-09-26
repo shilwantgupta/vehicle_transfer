@@ -5,8 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DriverModule } from './driver/driver.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { TransferModule } from './transfer/transfer.module';
-import { DriverController } from './driver/driver.controller';
-import { DriverService } from './driver/driver.service';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
