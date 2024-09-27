@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ajax from '@/pages/lib/instance';
+import { toast } from 'react-toastify';
 export default function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
   const [newVehicle, setNewVehicle] = useState({
@@ -25,6 +26,7 @@ export default function VehiclesPage() {
     ajax.post('/vehicles', newVehicle)
       .then(res => {
         setNewVehicle({ vehicleNumber: '', vehicleType: '' });
+        toast.success("Successfully added")
         fetchVehicles();
       })
       .catch(err => console.log(err))

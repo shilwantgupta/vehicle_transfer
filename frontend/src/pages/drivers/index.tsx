@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ajax from '@/pages/lib/instance'
+import { toast } from 'react-toastify';
 
 export default function DriversPage() {
   const [drivers, setDrivers] = useState([]);
@@ -24,6 +25,7 @@ export default function DriversPage() {
     ajax.post('/drivers', newDriver)
       .then(res => {
         setNewDriver({ name: '', phoneNumber: '' });
+        toast.success("Successfully added.")
         fetchDrivers();
       })
       .catch(err => console.log(err))

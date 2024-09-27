@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import ajax from '@/pages/lib/instance';
 import axios from 'axios';
-
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 export default function TransfersPage() {
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
@@ -10,7 +11,7 @@ export default function TransfersPage() {
     toDriverId: '',
     vehicleId: '',
   });
-
+  const router = useRouter();
   useEffect(() => {
     axios.all([ajax.get('/drivers'), ajax.get('/vehicles')])
       .then(res => {
@@ -22,9 +23,10 @@ export default function TransfersPage() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    ajax.post('/transfer',transfer)
+    ajax.post('/transfer', transfer)
       .then(res => {
-        console.log(res)
+        toast.success("Vehicle transferred successfully")
+        router.push('/transfers/history')
       })
       .catch(err => console.log(err))
   };
