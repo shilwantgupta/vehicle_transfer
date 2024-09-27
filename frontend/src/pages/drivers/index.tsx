@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 
 export default function DriversPage() {
   const [drivers, setDrivers] = useState([]);
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [newDriver, setNewDriver] = useState({ name: '', phoneNumber: '' });
 
   useEffect(() => {
     // Fetch drivers from API
@@ -12,55 +11,66 @@ export default function DriversPage() {
       .then((data) => setDrivers(data));
   }, []);
 
-  const addDriver = async (e: any) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
-    const response = await fetch('/api/drivers', {
+    // POST new driver to API
+    await fetch('/api/drivers', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phoneNumber }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newDriver),
     });
-    const newDriver = await response.json();
-    setDrivers([...drivers, newDriver]);
-    setName('');
-    setPhoneNumber('');
+    setNewDriver({ name: '', phoneNumber: '' });
+    // Fetch updated drivers
+    fetch('/api/drivers')
+      .then((res) => res.json())
+      .then((data) => setDrivers(data));
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100">
+    <div className="container mx-auto mt-8">
       <h1 className="text-3xl font-bold mb-4">Drivers</h1>
-      <form onSubmit={addDriver} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Driver Name"
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Phone Number"
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-        >
+
+      {/* Driver Creation Form */}
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 className="text-xl font-semibold mb-4">Add New Driver</h2>
+        <div className="mb-4">
+          <input
+            type="text"
+            value={newDriver.name}
+            onChange={(e) => setNewDriver({ ...newDriver, name: e.target.value })}
+            className="border p-2 w-full rounded-md"
+            placeholder="Driver Name"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="tel"
+            value={newDriver.phoneNumber}
+            onChange={(e) => setNewDriver({ ...newDriver, phoneNumber: e.target.value })}
+            className="border p-2 w-full rounded-md"
+            placeholder="Phone Number"
+            required
+          />
+        </div>
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">
           Add Driver
         </button>
       </form>
 
-      <ul className="mt-8 space-y-2">
-        {drivers.map((driver: any) => (
-          <li
-            key={driver.id}
-            className="bg-white p-4 shadow-md rounded-md"
-          >
-            {driver.name} - {driver.phoneNumber}
-          </li>
-        ))}
-      </ul>
+      {/* Driver List */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Driver List</h2>
+        <ul>
+          {drivers.map((driver:any) => (
+            <li key={driver.id} className="p-4 border-b">
+              {driver.name} - {driver.phoneNumber}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
