@@ -1,12 +1,15 @@
-import Navbar from '@/components/Navbar';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import Appbar from '@/components/Navbar';
 
 export default function App({ Component, pageProps }: AppProps) {
   return <>
-    <Navbar />
-    <div className="p-4">
-      <Component {...pageProps} />
+    <div>
+      <Appbar />
+      <div>
+        <Component {...pageProps} />
+      </div>
     </div>
   </>;
 }

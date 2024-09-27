@@ -1,32 +1,37 @@
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import Link from 'next/link';
-
-export default function Navbar() {
+import { useRouter } from 'next/router';
+function Appbar() {
+  const router = useRouter();
   return (
-    <nav className="bg-blue-600 p-4 shadow-md">
-      <div className="container mx-auto">
-        <ul className="flex justify-between items-center text-white font-semibold">
-          <li>
-            <Link href="/drivers">
-              <span className="hover:text-gray-300">Drivers</span>
+    <Navbar expand="lg" className="bg-body-tertiary">
+      <Container>
+        <Link className='navbar-brand' href="/">Vehicle Transfer</Link>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Link className={`nav-link ${router.pathname === '/' ? 'active' : ''}`} href="/">
+              Home
             </Link>
-          </li>
-          <li>
-            <Link href="/vehicles">
-              <span className="hover:text-gray-300">Vehicles</span>
+            <Link className={`nav-link ${router.pathname === '/vehicles' ? 'active' : ''}`} href="/vehicles">
+              Vehicles
             </Link>
-          </li>
-          <li>
-            <Link href="/transfers">
-              <span className="hover:text-gray-300">Transfer Vehicle</span>
+            <Link className={`nav-link ${router.pathname === '/drivers' ? 'active' : ''}`} href="/drivers">
+              Drivers
             </Link>
-          </li>
-          <li>
-            <Link href="/transfers/history">
-              <span className="hover:text-gray-300">Transfer History</span>
+            <Link className={`nav-link ${router.pathname === '/transfers' ? 'active' : ''}`} href="/transfers">
+              Transfers
             </Link>
-          </li>
-        </ul>
-      </div>
-    </nav>
+            <Link className={`nav-link ${router.pathname === '/transfers/history' ? 'active' : ''}`} href="/transfers/history">
+              History
+            </Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }
+
+export default Appbar;

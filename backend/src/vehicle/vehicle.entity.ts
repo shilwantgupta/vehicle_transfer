@@ -6,6 +6,9 @@ export class Vehicle {
   id: number;  // vehicleNumber
 
   @Column()
+  vehicleNumber: string
+  
+  @Column()
   vehicleType: string;
 
   @Column()

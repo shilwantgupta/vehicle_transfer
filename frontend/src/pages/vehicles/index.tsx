@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import ajax from '@/pages/lib/instance';
 export default function VehiclesPage() {
   const [vehicles, setVehicles] = useState([]);
   const [newVehicle, setNewVehicle] = useState({
@@ -7,25 +7,27 @@ export default function VehiclesPage() {
     vehicleType: '',
   });
 
+  const fetchVehicles = () => {
+    ajax.get('/vehicles')
+      .then(res => {
+        if (res.status === 200) {
+          setVehicles(res.data)
+        }
+      })
+      .catch(err => console.log(err))
+  }
   useEffect(() => {
-    fetch('/api/vehicles')
-      .then((res) => res.json())
-      .then((data) => setVehicles(data));
+    fetchVehicles();
   }, []);
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    await fetch('/api/vehicles', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newVehicle),
-    });
-    setNewVehicle({ vehicleNumber: '', vehicleType: '' });
-    fetch('/api/vehicles')
-      .then((res) => res.json())
-      .then((data) => setVehicles(data));
+    ajax.post('/vehicles', newVehicle)
+      .then(res => {
+        setNewVehicle({ vehicleNumber: '', vehicleType: '' });
+        fetchVehicles();
+      })
+      .catch(err => console.log(err))
   };
 
   return (
@@ -55,21 +57,32 @@ export default function VehiclesPage() {
             required
           />
         </div>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">
+        <button type="submit" className="btn btn-primary px-4 py-2 rounded-md">
           Add Vehicle
         </button>
       </form>
 
       {/* Vehicle List */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white p-6 mt-4 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Vehicle List</h2>
-        <ul>
-          {vehicles.map((vehicle:any) => (
-            <li key={vehicle.id} className="p-4 border-b">
-              {vehicle.vehicleNumber} - {vehicle.vehicleType}
-            </li>
-          ))}
-        </ul>
+        <table className='table table-bordered'>
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Vehicle Number</th>
+              <th>Vehicle Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vehicles.map((vehicle: any, i: number) => (
+              <tr key={vehicle.id}>
+                <td>{++i}</td>
+                <td>{vehicle.vehicleNumber}</td>
+                <td>{vehicle.vehicleType}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

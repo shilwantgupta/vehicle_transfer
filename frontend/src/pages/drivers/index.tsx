@@ -1,31 +1,32 @@
 import { useState, useEffect } from 'react';
+import ajax from '@/pages/lib/instance'
 
 export default function DriversPage() {
   const [drivers, setDrivers] = useState([]);
   const [newDriver, setNewDriver] = useState({ name: '', phoneNumber: '' });
 
+  const fetchDrivers = () => {
+    ajax.get('/drivers')
+      .then(res => {
+        if (res.status === 200) {
+          setDrivers(res.data)
+        }
+      })
+      .catch(err => console.log(err))
+  }
   useEffect(() => {
-    // Fetch drivers from API
-    fetch('/api/drivers')
-      .then((res) => res.json())
-      .then((data) => setDrivers(data));
+    fetchDrivers();
   }, []);
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    // POST new driver to API
-    await fetch('/api/drivers', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newDriver),
-    });
-    setNewDriver({ name: '', phoneNumber: '' });
-    // Fetch updated drivers
-    fetch('/api/drivers')
-      .then((res) => res.json())
-      .then((data) => setDrivers(data));
+
+    ajax.post('/drivers', newDriver)
+      .then(res => {
+        setNewDriver({ name: '', phoneNumber: '' });
+        fetchDrivers();
+      })
+      .catch(err => console.log(err))
   };
 
   return (
@@ -55,21 +56,33 @@ export default function DriversPage() {
             required
           />
         </div>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">
+        <button type="submit" className="btn btn-primary px-4 py-2 rounded-md">
           Add Driver
         </button>
       </form>
 
       {/* Driver List */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white p-6 mt-5 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Driver List</h2>
-        <ul>
-          {drivers.map((driver:any) => (
-            <li key={driver.id} className="p-4 border-b">
-              {driver.name} - {driver.phoneNumber}
-            </li>
-          ))}
-        </ul>
+        <table className='table table-bordered'>
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Driver Name</th>
+              <th>Driver Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {drivers && drivers.map((driver: any, i: number) => (
+              <tr key={driver.id}>
+                <td>{++i}</td>
+                <td>{driver.name}</td>
+                <td>{driver.phoneNumber}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
       </div>
     </div>
   );

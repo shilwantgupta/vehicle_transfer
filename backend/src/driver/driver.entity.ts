@@ -12,7 +12,5 @@ export class Driver {
   phoneNumber: string;
 
   @Column()
-  profilePhoto: string;  // This will store the path to the profile photo
-
-  // Additional columns can be added as needed
+  profilePhoto: string;  
 }

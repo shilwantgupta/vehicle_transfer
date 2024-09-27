@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import ajax from '@/pages/lib/instance';
+import axios from 'axios';
 
 export default function TransfersPage() {
   const [drivers, setDrivers] = useState([]);
@@ -10,19 +12,21 @@ export default function TransfersPage() {
   });
 
   useEffect(() => {
-    fetch('/api/drivers').then((res) => res.json()).then(setDrivers);
-    fetch('/api/vehicles').then((res) => res.json()).then(setVehicles);
+    axios.all([ajax.get('/drivers'), ajax.get('/vehicles')])
+      .then(res => {
+        console.log(res)
+        setDrivers(res[0]?.data)
+        setVehicles(res[1]?.data)
+      })
   }, []);
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    await fetch('/api/transfers', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(transfer),
-    });
+    ajax.post('/transfer',transfer)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => console.log(err))
   };
 
   return (
@@ -38,7 +42,7 @@ export default function TransfersPage() {
             className="border p-2 w-full rounded-md"
           >
             <option value="">Select a vehicle</option>
-            {vehicles.map((vehicle:any) => (
+            {vehicles && vehicles.map((vehicle: any) => (
               <option key={vehicle.id} value={vehicle.id}>
                 {vehicle.vehicleNumber} - {vehicle.vehicleType}
               </option>
@@ -54,7 +58,7 @@ export default function TransfersPage() {
             className="border p-2 w-full rounded-md"
           >
             <option value="">Select from driver</option>
-            {drivers.map((driver:any) => (
+            {drivers && drivers.map((driver: any) => (
               <option key={driver.id} value={driver.id}>
                 {driver.name}
               </option>
@@ -70,7 +74,7 @@ export default function TransfersPage() {
             className="border p-2 w-full rounded-md"
           >
             <option value="">Select to driver</option>
-            {drivers.map((driver:any) => (
+            {drivers.map((driver: any) => (
               <option key={driver.id} value={driver.id}>
                 {driver.name}
               </option>
@@ -78,7 +82,7 @@ export default function TransfersPage() {
           </select>
         </div>
 
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">
+        <button type="submit" className="btn btn-primary px-4 py-2 rounded-md">
           Submit Transfer
         </button>
       </form>
