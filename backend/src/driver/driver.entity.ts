@@ -1,0 +1,18 @@
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Driver {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column()
+  phoneNumber: string;
+
+  @Column()
+  profilePhoto: string;  // This will store the path to the profile photo
+
+  // Additional columns can be added as needed
+}
